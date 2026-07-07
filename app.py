@@ -220,6 +220,55 @@ def seite_branchen(daten):
         lambda b: "Ja" if ist_laendervergleichbar(b, branchen_dim) else "Nein (Vorsicht)"
     )
 
+    if land_wahl == "CN":
+        # China strukturell anders: "General industry" ist ein Aggregat, die
+        # Teilsegmente (Metal/Food/Plastic/Textiles/Wood) sind NICHT additiv dazu.
+        # Deshalb zwei getrennte Diagramme statt einem gemeinsamen Balkendiagramm,
+        # das faelschlich alle 8 Kategorien als gleichrangig-additiv suggerieren wuerde.
+        HAUPT_IDS = ["ELEC", "AUTO", "GENIND"]
+        TEIL_IDS = ["METAL", "FOOD", "PLASTIC", "TEXTILES", "WOOD"]
+
+        st.subheader("Hauptkategorien (additiv, ergeben die Gesamtsumme)")
+        df_haupt = df_land[df_land["Branche_ID"].isin(HAUPT_IDS)]
+        fig_haupt = px.bar(
+            df_haupt, x="Jahr_ID", y="Anzahl_Einheiten", color="Branche",
+            barmode="group",
+            labels={"Jahr_ID": "Jahr", "Anzahl_Einheiten": "Installationen (Einheiten)"},
+        )
+        st.plotly_chart(fig_haupt, use_container_width=True)
+
+        with st.expander("🔍 Teilsegmente von 'General Industry' (Detaileinblick, NICHT additiv zur Hauptkategorie)"):
+            st.warning(
+                "Diese Werte sind Bestandteile von 'General industry' (siehe oben), "
+                "nicht zusaetzlich dazu zu zaehlen. Sie erklaeren nur einen Teil des "
+                "Aggregats - der Rest ist nicht separat ausgewiesen."
+            )
+            df_teil = df_land[df_land["Branche_ID"].isin(TEIL_IDS)]
+            fig_teil = px.bar(
+                df_teil, x="Jahr_ID", y="Anzahl_Einheiten", color="Branche",
+                barmode="group",
+                labels={"Jahr_ID": "Jahr", "Anzahl_Einheiten": "Installationen (Einheiten)"},
+            )
+            st.plotly_chart(fig_teil, use_container_width=True)
+
+            for jahr in sorted(df_teil["Jahr_ID"].unique()):
+                genind_wert = df_land.loc[
+                    (df_land["Jahr_ID"] == jahr) & (df_land["Branche_ID"] == "GENIND"),
+                    "Anzahl_Einheiten"
+                ].values
+                teil_summe = df_teil.loc[df_teil["Jahr_ID"] == jahr, "Anzahl_Einheiten"].sum()
+                if len(genind_wert):
+                    anteil = teil_summe / genind_wert[0] * 100
+                    st.caption(
+                        f"{jahr}: Teilsegmente erklaeren {teil_summe:,.0f} von "
+                        f"{genind_wert[0]:,.0f} Einheiten in 'General Industry' "
+                        f"({anteil:.0f}%) - Rest nicht separat ausgewiesen."
+                    )
+
+        with st.expander("Rohdaten anzeigen (inkl. Vergleichbarkeits-Flag)"):
+            st.dataframe(df_land[["Branche", "Jahr_ID", "Anzahl_Einheiten", "Vergleichbar"]])
+        return
+
     fig = px.bar(
         df_land,
         x="Jahr_ID",
