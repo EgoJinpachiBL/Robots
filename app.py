@@ -121,6 +121,12 @@ def seite_uebersicht(daten):
         "Center (Mai 2026). Details zur Datenherkunft und -bereinigung siehe "
         "data/cleaning_log.md."
     )
+    st.markdown(
+        "💡 *Interessiert an der globalen Robotik-Landschaft insgesamt (Cobots, "
+        "Servicerobotik-Kategorien, Medizinroboter)? Siehe Seite "
+        "\"Robotik-Landschaft weltweit (Kontext)\" in der Navigation - dort ohne "
+        "Länderbezug, rein als Einordnung.*"
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -360,15 +366,15 @@ def seite_kontext_welt(daten):
 
     kw = daten["kontext_welt"]
 
-    # --- Sunburst: Industrieroboter (Cobot/klassisch) + Servicerobotik + Medizin ---
-    # Aufbau ueber plotly.express mit einer sauberen Tabelle (Hauptkategorie/Detail/Einheiten),
-    # damit Plotly die Summen der Hierarchie-Ebenen automatisch korrekt berechnet.
+    # --- Treemap: Industrieroboter (Cobot/klassisch) + Servicerobotik + Medizin ---
+    # Treemap statt Sunburst gewaehlt: bessere Lesbarkeit bei stark unterschiedlichen
+    # Groessenordnungen (542.000 vs. 199.000 vs. 16.700) und langen Textlabels.
     zeilen = [
         {"Hauptkategorie": "Industrieroboter", "Detail": "Klassischer Industrieroboter",
          "Einheiten": kw["industrieroboter"]["klassisch"]},
         {"Hauptkategorie": "Industrieroboter", "Detail": "Cobot",
          "Einheiten": kw["industrieroboter"]["cobot"]},
-        {"Hauptkategorie": "Medizinroboter", "Detail": "Medizinroboter",
+        {"Hauptkategorie": "Medizinroboter", "Detail": None,
          "Einheiten": kw["medizinroboter"]["gesamt"]},
     ]
     for kat in kw["servicerobotik_professionell"]["kategorien"]:
@@ -378,15 +384,16 @@ def seite_kontext_welt(daten):
             "Einheiten": kat["einheiten"],
         })
 
-    df_sunburst = pd.DataFrame(zeilen)
+    df_treemap = pd.DataFrame(zeilen)
 
-    fig = px.sunburst(
-        df_sunburst,
-        path=["Hauptkategorie", "Detail"],
+    fig = px.treemap(
+        df_treemap,
+        path=[px.Constant("Robotik weltweit 2024"), "Hauptkategorie", "Detail"],
         values="Einheiten",
         color="Hauptkategorie",
     )
     fig.update_layout(margin=dict(t=10, l=10, r=10, b=10), height=550)
+    fig.update_traces(textinfo="label+value+percent parent")
     st.plotly_chart(fig, use_container_width=True)
 
     st.caption(
@@ -452,11 +459,29 @@ def seite_kontext_welt(daten):
     col2.metric("China (hypothetisch)", f"{hyp_china:,}".replace(",", "."), help="Erfundener Wert")
     col3.metric("Deutschland (hypothetisch)", f"{hyp_deutschland:,}".replace(",", "."), help="Erfundener Wert")
 
+    # Zusaetzlich als interaktives Diagramm - hypothetische Balken visuell klar
+    # unterscheidbar (schraffiert/transparent) von der realen Weltzahl
+    df_regler = pd.DataFrame([
+        {"Kategorie": "Welt (real)", "Wert": basis_wert, "Typ": "Real"},
+        {"Kategorie": "China (hypothetisch)", "Wert": hyp_china, "Typ": "Hypothetisch"},
+        {"Kategorie": "Deutschland (hypothetisch)", "Wert": hyp_deutschland, "Typ": "Hypothetisch"},
+    ])
+    fig_regler = px.bar(
+        df_regler, x="Kategorie", y="Wert", color="Typ",
+        color_discrete_map={"Real": "#1f5c99", "Hypothetisch": "#b5651d"},
+        pattern_shape="Typ",
+        pattern_shape_map={"Real": "", "Hypothetisch": "/"},
+        labels={"Wert": "Einheiten"},
+        title=f"{kategorie_wahl}: real vs. hypothetisch",
+    )
+    fig_regler.update_layout(showlegend=True, height=350)
+    st.plotly_chart(fig_regler, use_container_width=True)
+
     st.caption(
-        "Diese drei Werte ändern sich live mit den Reglern oben. Sie zeigen "
-        "ausschliesslich, wie flexibel die App mit granulareren Daten umgehen "
-        "könnte, falls diese je verfügbar würden - nicht, wie die reale "
-        "Verteilung aussieht."
+        "Diese Werte ändern sich live mit den Reglern oben. Die schraffierten "
+        "Balken zeigen ausschliesslich, wie flexibel die App mit granulareren "
+        "Daten umgehen könnte, falls diese je verfügbar würden - nicht, wie die "
+        "reale Verteilung aussieht."
     )
 
 
