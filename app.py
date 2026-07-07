@@ -388,6 +388,52 @@ def seite_patente(daten):
     with st.expander("Rohdaten anzeigen"):
         st.dataframe(df[["Land", "Jahr_ID", "Anzahl_Patentveroeffentlichungen"]])
 
+    st.markdown("---")
+    st.subheader("Kontext: Installationen vs. Patentveröffentlichungen (China)")
+
+    st.warning(
+        "⚠️ **Rein deskriptive Gegenüberstellung, keine Kausalaussage.** Diese "
+        "Grafik zeigt zwei unabhängig erhobene Zeitreihen auf zwei "
+        "unterschiedlichen Skalen nebeneinander. Ein Auseinanderlaufen oder "
+        "Gleichlaufen beider Kurven ist NICHT als Ursache-Wirkungs-Beziehung "
+        "zu interpretieren (siehe Anforderung N4)."
+    )
+
+    df_inst_cn = pd.DataFrame(daten["installationen"]["gesamt_zeitreihe"])
+    df_inst_cn = df_inst_cn[
+        (df_inst_cn["Land_ID"] == "CN") & (df_inst_cn["Jahr_ID"] <= 2023)
+    ].sort_values("Jahr_ID")
+    df_pat_cn = df[df["Land_ID"] == "CN"].sort_values("Jahr_ID")
+
+    fig_dual = go.Figure()
+    fig_dual.add_trace(go.Scatter(
+        x=df_inst_cn["Jahr_ID"], y=df_inst_cn["Anzahl_Einheiten"],
+        name="Installationen (links)", mode="lines+markers",
+        line=dict(color=LAND_FARBEN["CN"]), yaxis="y1",
+    ))
+    fig_dual.add_trace(go.Scatter(
+        x=df_pat_cn["Jahr_ID"], y=df_pat_cn["Anzahl_Patentveroeffentlichungen"],
+        name="Patentveröffentlichungen (rechts)", mode="lines+markers",
+        line=dict(color="#7b4fa6", dash="dot"), yaxis="y2",
+    ))
+    fig_dual.update_layout(
+        xaxis=dict(title="Jahr"),
+        yaxis=dict(title="Installationen (Einheiten)", side="left"),
+        yaxis2=dict(title="Patentveröffentlichungen", side="right", overlaying="y"),
+        hovermode="x unified",
+        legend=dict(orientation="h", yanchor="bottom", y=1.02),
+    )
+    st.plotly_chart(fig_dual, use_container_width=True)
+
+    st.caption(
+        "China: Installationen 2014-2023 (linke Achse) vs. WIPO-"
+        "Patentveröffentlichungen Feld 'Handling' 2014-2023 (rechte Achse). "
+        "Auffällig: Patentveröffentlichungen erreichen 2018 ihren Höhepunkt "
+        "und stagnieren seither, während die Installationszahlen im selben "
+        "Zeitraum weiter deutlich steigen - ein beschreibbares, nicht kausal "
+        "erklärbares Muster."
+    )
+
 
 # ---------------------------------------------------------------------------
 # Navigation / Main
@@ -406,6 +452,7 @@ def main():
             "Bestand & Dichte (Nutzung, Stichtag)",
             "Patente (Innovation)",
             "Robotik-Landschaft weltweit (Kontext)",
+            "Methodik & Datenmodell",
         ],
     )
 
@@ -421,6 +468,8 @@ def main():
         seite_patente(daten)
     elif seite == "Robotik-Landschaft weltweit (Kontext)":
         seite_kontext_welt(daten)
+    elif seite == "Methodik & Datenmodell":
+        seite_methodik(daten)
 
     st.sidebar.markdown("---")
     st.sidebar.caption(
@@ -583,6 +632,50 @@ def seite_kontext_welt(daten):
         "Balken zeigen ausschliesslich, wie flexibel die App mit granulareren "
         "Daten umgehen könnte, falls diese je verfügbar würden - nicht, wie die "
         "reale Verteilung aussieht."
+    )
+
+
+
+
+# ---------------------------------------------------------------------------
+# Seite: Methodik & Datenmodell (Pipeline- und ERM-Diagramm)
+# ---------------------------------------------------------------------------
+
+def seite_methodik(daten):
+    st.title("Methodik & Datenmodell")
+
+    st.markdown(
+        "Diese Seite zeigt die beiden methodischen Grafiken aus Kapitel 2 "
+        "(Projektidee und fachlicher Kontext) direkt in der Anwendung, damit "
+        "Bericht und technische Umsetzung konsistent bleiben."
+    )
+
+    st.subheader("Datenpipeline des Projekts")
+    st.image(
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "pipeline_diagramm.png"),
+        caption="Abb.: Datenpipeline des Projekts (Extract - Transform - Transform - Load), eigene Darstellung",
+        use_container_width=True,
+    )
+    st.caption(
+        "Beschaffung: manueller Download IFR/WIPO. Bereinigung: Skalierung, "
+        "Ländercodes, Jahrgangs-Konflikt (siehe Cleaning Log). Strukturierung: "
+        "ERM-Modell und JSON-Export. Laden/Visualisierung: diese "
+        "Streamlit-Anwendung."
+    )
+
+    st.markdown("---")
+
+    st.subheader("Entity-Relationship-Modell (ERM)")
+    st.image(
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "ERM_Industrieroboter_DE_CN.png"),
+        caption="Abb.: Entity-Relationship-Modell der Projektdatenbank, eigene Darstellung",
+        use_container_width=True,
+    )
+    st.caption(
+        "Hinweis: Branche (IFR) und Technologiefeld (WIPO) sind bewusst NICHT "
+        "verknüpft - unterschiedliche Klassifikationssysteme, keine "
+        "Kausalverknüpfung. Verbindung nur über die gemeinsamen Dimensionen "
+        "Land und Jahr."
     )
 
 
