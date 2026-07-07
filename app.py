@@ -15,6 +15,7 @@ Ausfuehren mit:  streamlit run app.py
 
 import json
 import os
+import colorsys
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -79,6 +80,25 @@ def ist_laendervergleichbar(branche_id, branchen_dim):
         if b["Branche_ID"] == branche_id:
             return b.get("direkt_laendervergleichbar", False)
     return False
+
+
+def erzeuge_schattierungen(hex_farbe: str, anzahl: int, hell_min=0.35, hell_max=0.72):
+    """Erzeugt `anzahl` unterscheidbare Schattierungen einer Basisfarbe
+    (gleicher Farbton, unterschiedliche Helligkeit), fuer Unterkategorien
+    innerhalb derselben Hauptkategorie im Treemap."""
+    r = int(hex_farbe[1:3], 16) / 255
+    g = int(hex_farbe[3:5], 16) / 255
+    b = int(hex_farbe[5:7], 16) / 255
+    h, _, s = colorsys.rgb_to_hls(r, g, b)
+    schattierungen = []
+    for i in range(anzahl):
+        anteil = i / max(anzahl - 1, 1)
+        neue_helligkeit = hell_min + anteil * (hell_max - hell_min)
+        nr, ng, nb = colorsys.hls_to_rgb(h, neue_helligkeit, s)
+        schattierungen.append(
+            "#{:02x}{:02x}{:02x}".format(int(nr * 255), int(ng * 255), int(nb * 255))
+        )
+    return schattierungen
 
 
 # ---------------------------------------------------------------------------
@@ -386,14 +406,33 @@ def seite_kontext_welt(daten):
 
     df_treemap = pd.DataFrame(zeilen)
 
+    BASISFARBEN = {
+        "Industrieroboter": "#1f5c99",
+        "Servicerobotik (professionell)": "#2e8b57",
+        "Medizinroboter": "#7b4fa6",
+    }
+
     fig = px.treemap(
         df_treemap,
         path=[px.Constant("Robotik weltweit 2024"), "Hauptkategorie", "Detail"],
         values="Einheiten",
-        color="Hauptkategorie",
     )
+
+    # Farben manuell zuweisen: Hauptkategorien in ihrer Basisfarbe, Unterkategorien
+    # in unterscheidbaren Schattierungen derselben Basisfarbe (gleicher Farbton,
+    # unterschiedliche Helligkeit) - Root-Knoten neutral grau.
+    farb_map = {"Robotik weltweit 2024": "#3a3a3a"}
+    for hauptkat, basis in BASISFARBEN.items():
+        farb_map[hauptkat] = basis
+        details = df_treemap.loc[df_treemap["Hauptkategorie"] == hauptkat, "Detail"].dropna().tolist()
+        if details:
+            schattierungen = erzeuge_schattierungen(basis, len(details))
+            for detail, schatten in zip(details, schattierungen):
+                farb_map[detail] = schatten
+
+    fig.data[0].marker.colors = [farb_map.get(label, "#888888") for label in fig.data[0].labels]
     fig.update_layout(margin=dict(t=10, l=10, r=10, b=10), height=550)
-    fig.update_traces(textinfo="label+value+percent parent")
+    fig.update_traces(textinfo="label+value+percent parent", marker=dict(cornerradius=3))
     st.plotly_chart(fig, use_container_width=True)
 
     st.caption(
