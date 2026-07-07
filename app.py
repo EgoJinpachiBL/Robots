@@ -361,37 +361,31 @@ def seite_kontext_welt(daten):
     kw = daten["kontext_welt"]
 
     # --- Sunburst: Industrieroboter (Cobot/klassisch) + Servicerobotik + Medizin ---
-    labels = ["Robotik gesamt (ohne Consumer)"]
-    parents = [""]
-    values = [0]  # wird durch Kinder aufsummiert (Plotly Sunburst mit branchvalues="total")
-
-    # Ebene 1: Hauptkategorien
-    labels += ["Industrieroboter", "Servicerobotik (professionell)", "Medizinroboter"]
-    parents += ["Robotik gesamt (ohne Consumer)"] * 3
-    values += [
-        kw["industrieroboter"]["gesamt"],
-        kw["servicerobotik_professionell"]["gesamt"],
-        kw["medizinroboter"]["gesamt"],
+    # Aufbau ueber plotly.express mit einer sauberen Tabelle (Hauptkategorie/Detail/Einheiten),
+    # damit Plotly die Summen der Hierarchie-Ebenen automatisch korrekt berechnet.
+    zeilen = [
+        {"Hauptkategorie": "Industrieroboter", "Detail": "Klassischer Industrieroboter",
+         "Einheiten": kw["industrieroboter"]["klassisch"]},
+        {"Hauptkategorie": "Industrieroboter", "Detail": "Cobot",
+         "Einheiten": kw["industrieroboter"]["cobot"]},
+        {"Hauptkategorie": "Medizinroboter", "Detail": "Medizinroboter",
+         "Einheiten": kw["medizinroboter"]["gesamt"]},
     ]
-
-    # Ebene 2: Industrieroboter-Split
-    labels += ["Klassischer Industrieroboter", "Cobot"]
-    parents += ["Industrieroboter", "Industrieroboter"]
-    values += [kw["industrieroboter"]["klassisch"], kw["industrieroboter"]["cobot"]]
-
-    # Ebene 2: Servicerobotik-Kategorien
     for kat in kw["servicerobotik_professionell"]["kategorien"]:
-        labels.append(kat["name"])
-        parents.append("Servicerobotik (professionell)")
-        values.append(kat["einheiten"])
+        zeilen.append({
+            "Hauptkategorie": "Servicerobotik (professionell)",
+            "Detail": kat["name"],
+            "Einheiten": kat["einheiten"],
+        })
 
-    fig = go.Figure(go.Sunburst(
-        labels=labels,
-        parents=parents,
-        values=values,
-        branchvalues="total",
-        marker=dict(colorscale="Blues"),
-    ))
+    df_sunburst = pd.DataFrame(zeilen)
+
+    fig = px.sunburst(
+        df_sunburst,
+        path=["Hauptkategorie", "Detail"],
+        values="Einheiten",
+        color="Hauptkategorie",
+    )
     fig.update_layout(margin=dict(t=10, l=10, r=10, b=10), height=550)
     st.plotly_chart(fig, use_container_width=True)
 
