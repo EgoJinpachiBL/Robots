@@ -392,46 +392,55 @@ def seite_patente(daten):
     st.subheader("Kontext: Installationen vs. Patentveröffentlichungen (China)")
 
     st.warning(
-        "⚠️ **Rein deskriptive Gegenüberstellung, keine Kausalaussage.** Diese "
-        "Grafik zeigt zwei unabhängig erhobene Zeitreihen auf zwei "
-        "unterschiedlichen Skalen nebeneinander. Ein Auseinanderlaufen oder "
-        "Gleichlaufen beider Kurven ist NICHT als Ursache-Wirkungs-Beziehung "
-        "zu interpretieren (siehe Anforderung N4)."
+        "⚠️ **Rein deskriptive Gegenüberstellung, keine Kausalaussage.** "
+        "Beide Reihen sind auf 2014 = 100 indexiert, um echte Wachstumsraten "
+        "vergleichbar zu machen. Eine Doppelachsen-Darstellung mit "
+        "Absolutwerten wurde bewusst NICHT gewählt: Bei zwei unabhängig "
+        "skalierten Achsen kann die visuelle Position einer Kurve (z. B. "
+        "'liegt höher als die andere') ein reines Artefakt der Achsenwahl "
+        "sein, ohne jede inhaltliche Bedeutung. Ein Gleichlaufen oder "
+        "Auseinanderlaufen der indexierten Kurven ist trotzdem NICHT als "
+        "Ursache-Wirkungs-Beziehung zu interpretieren (siehe Anforderung N4)."
     )
 
     df_inst_cn = pd.DataFrame(daten["installationen"]["gesamt_zeitreihe"])
     df_inst_cn = df_inst_cn[
         (df_inst_cn["Land_ID"] == "CN") & (df_inst_cn["Jahr_ID"] <= 2023)
-    ].sort_values("Jahr_ID")
-    df_pat_cn = df[df["Land_ID"] == "CN"].sort_values("Jahr_ID")
+    ].sort_values("Jahr_ID").reset_index(drop=True)
+    df_pat_cn = df[df["Land_ID"] == "CN"].sort_values("Jahr_ID").reset_index(drop=True)
+
+    basis_inst = df_inst_cn["Anzahl_Einheiten"].iloc[0]
+    basis_pat = df_pat_cn["Anzahl_Patentveroeffentlichungen"].iloc[0]
+    df_inst_cn["Index"] = df_inst_cn["Anzahl_Einheiten"] / basis_inst * 100
+    df_pat_cn["Index"] = df_pat_cn["Anzahl_Patentveroeffentlichungen"] / basis_pat * 100
 
     fig_dual = go.Figure()
     fig_dual.add_trace(go.Scatter(
-        x=df_inst_cn["Jahr_ID"], y=df_inst_cn["Anzahl_Einheiten"],
-        name="Installationen (links)", mode="lines+markers",
-        line=dict(color=LAND_FARBEN["CN"]), yaxis="y1",
+        x=df_inst_cn["Jahr_ID"], y=df_inst_cn["Index"],
+        name="Installationen (indexiert)", mode="lines+markers",
+        line=dict(color=LAND_FARBEN["CN"]),
     ))
     fig_dual.add_trace(go.Scatter(
-        x=df_pat_cn["Jahr_ID"], y=df_pat_cn["Anzahl_Patentveroeffentlichungen"],
-        name="Patentveröffentlichungen (rechts)", mode="lines+markers",
-        line=dict(color="#7b4fa6", dash="dot"), yaxis="y2",
+        x=df_pat_cn["Jahr_ID"], y=df_pat_cn["Index"],
+        name="Patentveröffentlichungen (indexiert)", mode="lines+markers",
+        line=dict(color="#7b4fa6", dash="dot"),
     ))
     fig_dual.update_layout(
         xaxis=dict(title="Jahr"),
-        yaxis=dict(title="Installationen (Einheiten)", side="left"),
-        yaxis2=dict(title="Patentveröffentlichungen", side="right", overlaying="y"),
+        yaxis=dict(title="Index (2014 = 100)"),
         hovermode="x unified",
         legend=dict(orientation="h", yanchor="bottom", y=1.02),
     )
     st.plotly_chart(fig_dual, use_container_width=True)
 
+    index_2023_inst = df_inst_cn["Index"].iloc[-1]
+    index_2021_pat = df_pat_cn.loc[df_pat_cn["Jahr_ID"] == 2021, "Index"].values[0]
     st.caption(
-        "China: Installationen 2014-2023 (linke Achse) vs. WIPO-"
-        "Patentveröffentlichungen Feld 'Handling' 2014-2023 (rechte Achse). "
-        "Auffällig: Patentveröffentlichungen erreichen 2018 ihren Höhepunkt "
-        "und stagnieren seither, während die Installationszahlen im selben "
-        "Zeitraum weiter deutlich steigen - ein beschreibbares, nicht kausal "
-        "erklärbares Muster."
+        "China, indexiert auf 2014 = 100: Installationen wachsen bis 2023 "
+        f"durchgehend weiter (Index 2023: {index_2023_inst:.0f}). "
+        f"Patentveröffentlichungen erreichen ihr Maximum 2021 "
+        f"(Index {index_2021_pat:.0f}) und verharren danach auf einem "
+        "Plateau ohne klaren weiteren Anstieg."
     )
 
 
