@@ -1,0 +1,8 @@
+{
+  "_hinweis": "Stichtagswert 2024, keine Zeitreihe pro Land verfuegbar (Scope-Entscheidung Schritt 1). Weltweite Zeitreihe 2014-2024 existiert, aber nicht pro Land - separat in fakt_bestand_welt_zeitreihe.json",
+  "daten": [
+    {"Land_ID": "WORLD", "Jahr_ID": 2024, "Anzahl_Einheiten": 4664000},
+    {"Land_ID": "DE", "Jahr_ID": 2024, "Anzahl_Einheiten": 278900},
+    {"Land_ID": "CN", "Jahr_ID": 2024, "Anzahl_Einheiten": 2027200}
+  ]
+}

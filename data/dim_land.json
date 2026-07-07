@@ -1,0 +1,5 @@
+[
+  {"Land_ID": "DE", "ISO_Code": "DE", "Name": "Deutschland"},
+  {"Land_ID": "CN", "ISO_Code": "CN", "Name": "China (Festland, ohne Hongkong SAR/Macao SAR/Chinese Taipei)"},
+  {"Land_ID": "WORLD", "ISO_Code": null, "Name": "Welt (Aggregat, nur fuer Kontext-/Vergleichszwecke)"}
+]

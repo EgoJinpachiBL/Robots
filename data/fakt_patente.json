@@ -1,0 +1,26 @@
+{
+  "_hinweis": "Indicator 4a - Patent publications by technology, Total count by applicant's origin, Field of technology: 25 - Handling (Naeherung fuer IPC B25J). Quelle: WIPO IP Statistics Data Center, Stand Mai 2026.",
+  "daten": [
+    {"Land_ID": "CN", "Jahr_ID": 2014, "Techfeld_ID": "T25", "Anzahl_Patentveroeffentlichungen": 18937},
+    {"Land_ID": "CN", "Jahr_ID": 2015, "Techfeld_ID": "T25", "Anzahl_Patentveroeffentlichungen": 26116},
+    {"Land_ID": "CN", "Jahr_ID": 2016, "Techfeld_ID": "T25", "Anzahl_Patentveroeffentlichungen": 30873},
+    {"Land_ID": "CN", "Jahr_ID": 2017, "Techfeld_ID": "T25", "Anzahl_Patentveroeffentlichungen": 38183},
+    {"Land_ID": "CN", "Jahr_ID": 2018, "Techfeld_ID": "T25", "Anzahl_Patentveroeffentlichungen": 56454},
+    {"Land_ID": "CN", "Jahr_ID": 2019, "Techfeld_ID": "T25", "Anzahl_Patentveroeffentlichungen": 51196},
+    {"Land_ID": "CN", "Jahr_ID": 2020, "Techfeld_ID": "T25", "Anzahl_Patentveroeffentlichungen": 53254},
+    {"Land_ID": "CN", "Jahr_ID": 2021, "Techfeld_ID": "T25", "Anzahl_Patentveroeffentlichungen": 60185},
+    {"Land_ID": "CN", "Jahr_ID": 2022, "Techfeld_ID": "T25", "Anzahl_Patentveroeffentlichungen": 52075},
+    {"Land_ID": "CN", "Jahr_ID": 2023, "Techfeld_ID": "T25", "Anzahl_Patentveroeffentlichungen": 54341},
+
+    {"Land_ID": "DE", "Jahr_ID": 2014, "Techfeld_ID": "T25", "Anzahl_Patentveroeffentlichungen": 4559},
+    {"Land_ID": "DE", "Jahr_ID": 2015, "Techfeld_ID": "T25", "Anzahl_Patentveroeffentlichungen": 4658},
+    {"Land_ID": "DE", "Jahr_ID": 2016, "Techfeld_ID": "T25", "Anzahl_Patentveroeffentlichungen": 5054},
+    {"Land_ID": "DE", "Jahr_ID": 2017, "Techfeld_ID": "T25", "Anzahl_Patentveroeffentlichungen": 5024},
+    {"Land_ID": "DE", "Jahr_ID": 2018, "Techfeld_ID": "T25", "Anzahl_Patentveroeffentlichungen": 4748},
+    {"Land_ID": "DE", "Jahr_ID": 2019, "Techfeld_ID": "T25", "Anzahl_Patentveroeffentlichungen": 4815},
+    {"Land_ID": "DE", "Jahr_ID": 2020, "Techfeld_ID": "T25", "Anzahl_Patentveroeffentlichungen": 4988},
+    {"Land_ID": "DE", "Jahr_ID": 2021, "Techfeld_ID": "T25", "Anzahl_Patentveroeffentlichungen": 4565},
+    {"Land_ID": "DE", "Jahr_ID": 2022, "Techfeld_ID": "T25", "Anzahl_Patentveroeffentlichungen": 4632},
+    {"Land_ID": "DE", "Jahr_ID": 2023, "Techfeld_ID": "T25", "Anzahl_Patentveroeffentlichungen": 4274}
+  ]
+}

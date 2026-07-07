@@ -1,0 +1,8 @@
+{
+  "_hinweis": "Stichtagswert 2023 (Roboter installiert pro 10.000 Beschaeftigte im verarbeitenden Gewerbe), keine Zeitreihe pro Land verfuegbar (Scope-Entscheidung Schritt 1)",
+  "daten": [
+    {"Land_ID": "WORLD", "Jahr_ID": 2023, "Wert": 162},
+    {"Land_ID": "DE", "Jahr_ID": 2023, "Wert": 429},
+    {"Land_ID": "CN", "Jahr_ID": 2023, "Wert": 470}
+  ]
+}

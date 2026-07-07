@@ -1,0 +1,13 @@
+[
+  {"Branche_ID": "AUTO", "Bezeichnung": "Automotive", "Quelle": "IFR", "direkt_laendervergleichbar": true},
+  {"Branche_ID": "ELEC", "Bezeichnung": "Electrical/electronics", "Quelle": "IFR", "direkt_laendervergleichbar": true},
+  {"Branche_ID": "METAL", "Bezeichnung": "Metal and machinery", "Quelle": "IFR", "direkt_laendervergleichbar": false},
+  {"Branche_ID": "PLASTIC", "Bezeichnung": "Plastic and chemical products / Rubber and plastics (CN)", "Quelle": "IFR", "direkt_laendervergleichbar": false},
+  {"Branche_ID": "FOOD", "Bezeichnung": "Food", "Quelle": "IFR", "direkt_laendervergleichbar": false},
+  {"Branche_ID": "TEXTILES", "Bezeichnung": "Textiles (nur China ausgewiesen)", "Quelle": "IFR", "direkt_laendervergleichbar": false},
+  {"Branche_ID": "WOOD", "Bezeichnung": "Wood and furniture (nur China ausgewiesen)", "Quelle": "IFR", "direkt_laendervergleichbar": false},
+  {"Branche_ID": "OTHER", "Bezeichnung": "All others", "Quelle": "IFR", "direkt_laendervergleichbar": false},
+  {"Branche_ID": "UNSPEC", "Bezeichnung": "Unspecified", "Quelle": "IFR", "direkt_laendervergleichbar": false},
+  {"Branche_ID": "GENIND", "Bezeichnung": "General industry (China, inkl. Unspecified) - uebergeordnetes Aggregat, ueberschneidet sich mit METAL/FOOD/PLASTIC/TEXTILES/WOOD/OTHER/UNSPEC, NICHT additiv verwenden", "Quelle": "IFR", "direkt_laendervergleichbar": false},
+  {"Branche_ID": null, "Bezeichnung": "Gesamt (alle Branchen)", "Quelle": "IFR", "direkt_laendervergleichbar": true}
+]
