@@ -73,6 +73,18 @@ def branche_name(branche_id, branchen_dim):
     return branche_id
 
 
+def branche_kurzname(branche_id, branchen_dim):
+    """Kurzer Anzeigename fuer Diagramme/Legenden - NICHT die ausfuehrliche
+    methodische Beschreibung (die steht im Feld 'Bezeichnung' und gehoert nur
+    in Tooltips/Rohdaten, nicht in die Chart-Legende)."""
+    if branche_id is None:
+        return "Gesamt"
+    for b in branchen_dim:
+        if b["Branche_ID"] == branche_id:
+            return b.get("Kurzname", b["Bezeichnung"])
+    return branche_id
+
+
 def ist_laendervergleichbar(branche_id, branchen_dim):
     if branche_id is None:
         return True
@@ -215,7 +227,8 @@ def seite_branchen(daten):
         format_func=lambda x: LAND_LABEL[x],
     )
     df_land = df[df["Land_ID"] == land_wahl].copy()
-    df_land["Branche"] = df_land["Branche_ID"].apply(lambda b: branche_name(b, branchen_dim))
+    df_land["Branche"] = df_land["Branche_ID"].apply(lambda b: branche_kurzname(b, branchen_dim))
+    df_land["Branche_ausfuehrlich"] = df_land["Branche_ID"].apply(lambda b: branche_name(b, branchen_dim))
     df_land["Vergleichbar"] = df_land["Branche_ID"].apply(
         lambda b: "Ja" if ist_laendervergleichbar(b, branchen_dim) else "Nein (Vorsicht)"
     )
@@ -266,7 +279,7 @@ def seite_branchen(daten):
                     )
 
         with st.expander("Rohdaten anzeigen (inkl. Vergleichbarkeits-Flag)"):
-            st.dataframe(df_land[["Branche", "Jahr_ID", "Anzahl_Einheiten", "Vergleichbar"]])
+            st.dataframe(df_land[["Branche", "Branche_ausfuehrlich", "Jahr_ID", "Anzahl_Einheiten", "Vergleichbar"]])
         return
 
     fig = px.bar(
@@ -281,7 +294,7 @@ def seite_branchen(daten):
     st.plotly_chart(fig, use_container_width=True)
 
     with st.expander("Rohdaten anzeigen (inkl. Vergleichbarkeits-Flag)"):
-        st.dataframe(df_land[["Branche", "Jahr_ID", "Anzahl_Einheiten", "Vergleichbar"]])
+        st.dataframe(df_land[["Branche", "Branche_ausfuehrlich", "Jahr_ID", "Anzahl_Einheiten", "Vergleichbar"]])
 
 
 # ---------------------------------------------------------------------------
