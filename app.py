@@ -342,10 +342,6 @@ def main():
     )
 
 
-if __name__ == "__main__":
-    main()
-
-
 # ---------------------------------------------------------------------------
 # Seite: Robotik-Landschaft weltweit (Kontext, F7) + Explorations-Regler (F12)
 # ---------------------------------------------------------------------------
@@ -468,3 +464,7 @@ def seite_kontext_welt(daten):
         "könnte, falls diese je verfügbar würden - nicht, wie die reale "
         "Verteilung aussieht."
     )
+
+
+if __name__ == "__main__":
+    main()
