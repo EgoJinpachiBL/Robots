@@ -1,0 +1,31 @@
+{
+  "_hinweis": "Ausschliesslich echte, global aggregierte IFR-Weltzahlen 2024. Kein Laenderbezug. Dient der Kontexteinordnung (Nebenfrage), nicht der Hauptforschungsfrage. Siehe Anforderung F7/N7.",
+  "_datenqualitaet": "Summe der Servicerobotik-Kategorien (199.090) weicht geringfuegig von der genannten Gesamtzahl (199.000) ab - Rundungsartefakt aus den urspruenglich in Prozent angegebenen IFR-Werten, kein eigener Rechenfehler. Nicht korrigiert, um die Originalquelle nicht zu verfaelschen.",
+  "industrieroboter": {
+    "gesamt": 542000,
+    "cobot": 64542,
+    "cobot_anteil_prozent": 11.9,
+    "klassisch": 477458
+  },
+  "servicerobotik_professionell": {
+    "gesamt": 199000,
+    "kategorien": [
+      {"name": "Transport & Logistik", "einheiten": 102925, "anteil_prozent": 52},
+      {"name": "Gastgewerbe", "einheiten": 42030, "anteil_prozent": 21},
+      {"name": "Professionelle Reinigung", "einheiten": 25527, "anteil_prozent": 13},
+      {"name": "Landwirtschaft", "einheiten": 19487, "anteil_prozent": 10},
+      {"name": "Security", "einheiten": 3128, "anteil_prozent": 1},
+      {"name": "Sonstige", "einheiten": 5993, "anteil_prozent": 3}
+    ]
+  },
+  "medizinroboter": {
+    "gesamt": 16700,
+    "wachstum_prozent": 91,
+    "_hinweis": "Eigene IFR-Kategorie, separat von professioneller Servicerobotik gefuehrt"
+  },
+  "consumer_servicerobotik": {
+    "gesamt": 20100000,
+    "wachstum_prozent": 11,
+    "_hinweis": "Andere Groessenordnung (Millionen statt Tausend) - Saugroboter, Maehroboter usw. Bewusst getrennt dargestellt, nicht in Hauptvergleich integriert, da sonst alle anderen Kategorien visuell verschwinden wuerden."
+  }
+}
